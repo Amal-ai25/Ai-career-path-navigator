@@ -1,0 +1,239 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Career Path Navigator – Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="logo">🎯</div>
+        <div class="titles">
+          <h1>AI Career Path Navigator</h1>
+          <p class="subtitle">Smart guidance for high‑school & university students</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <a class="nav-link active" href="index.html">Profile</a>
+        <a class="nav-link" href="chat.html">Chatbot</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-text">
+        <h2>Build your profile</h2>
+        <p>Fill your skills, interests (RIASEC), background, and passions. We’ll suggest careers, courses, and a roadmap.</p>
+      </div>
+      <div class="hero-cta">
+        <button class="btn btn-primary" onclick="document.getElementById('profileForm').scrollIntoView({behavior:'smooth'})">Start now</button>
+      </div>
+    </section>
+
+    <form id="profileForm" class="card form-grid" onsubmit="handleSubmit(event)">
+      <!-- Personal Basics -->
+      <div class="form-section">
+        <h3>Basics</h3>
+        <div class="grid two">
+          <label class="field">
+            <span>Full Name   </span>
+            <input type="text" name="name" placeholder="Your name" required />
+          </label>
+          <label class="field">
+            <span>Age</span>
+            <input type="number" name="age" min="12" max="80" placeholder="18" />
+          </label>
+        </div>
+        <div class="grid two">
+          <label class="field">
+            <span>High‑School Track</span>
+            <select name="track" required>
+              <option value="">Select…</option>
+              <option>Science</option>
+              <option>Arts / Humanities</option>
+              <option>Economics & Sociology</option>
+              <option>General</option>
+              <option>Technical / Vocational</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Location (Country/City)</span>
+            <input type="text" name="location" placeholder="Tripoli, Lebanon" />
+          </label>
+        </div>
+      </div>
+
+      <!-- Interests (RIASEC) -->
+      <div class="form-section">
+        <h3>Interests (RIASEC)</h3>
+        <p class="muted">Choose the top 2–3 letters that best describe you.</p>
+        <div class="grid six chips">
+          <label class="chip"><input type="checkbox" name="riasec" value="R"> Realistic (R)</label>
+          <label class="chip"><input type="checkbox" name="riasec" value="I"> Investigative (I)</label>
+          <label class="chip"><input type="checkbox" name="riasec" value="A"> Artistic (A)</label>
+          <label class="chip"><input type="checkbox" name="riasec" value="S"> Social (S)</label>
+          <label class="chip"><input type="checkbox" name="riasec" value="E"> Enterprising (E)</label>
+          <label class="chip"><input type="checkbox" name="riasec" value="C"> Conventional (C)</label>
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="form-section">
+        <h3>Skills</h3>
+        <p class="muted">Add hard & soft skills (e.g., Python, Excel, Communication, AutoCAD, Biology)</p>
+        <div class="tag-input" id="skillsInput">
+          <input type="text" placeholder="Type a skill and press Enter" onkeydown="tagInput(event, 'skills')" />
+          <div class="tags" id="skills-tags"></div>
+        </div>
+      </div>
+
+      <!-- Courses / Certifications -->
+      <div class="form-section">
+        <h3>Courses & Certifications</h3>
+        <div class="tag-input" id="coursesInput">
+          <input type="text" placeholder="e.g., Google Data Analytics, CCNA, Photoshop" onkeydown="tagInput(event, 'courses')" />
+          <div class="tags" id="courses-tags"></div>
+        </div>
+      </div>
+
+      <!-- Preferences -->
+      <div class="form-section">
+        <h3>Preferences & Passion</h3>
+        <div class="grid two">
+          <label class="field">
+            <span>Work Style</span>
+            <select name="workstyle">
+              <option value="">Select…</option>
+              <option>Hands‑on / Field</option>
+              <option>Lab / Research</option>
+              <option>Creative / Design</option>
+              <option>People‑centric / Teaching</option>
+              <option>Business / Sales</option>
+              <option>Office / Data</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Preferred Study Level</span>
+            <select name="study">
+              <option value="">Any</option>
+              <option>Vocational</option>
+              <option>Diploma</option>
+              <option>Bachelor</option>
+              <option>Master</option>
+            </select>
+          </label>
+        </div>
+        <label class="field">
+          <span>Passion / Goals (Optional)</span>
+          <textarea name="goals" rows="4" placeholder="Describe what excites you…"></textarea>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button class="btn" type="reset">Reset</button>
+        <button class="btn btn-primary" type="submit">Get Recommendations</button>
+      </div>
+    </form>
+
+    <!-- Results -->
+    <section id="results" class="results-grid"></section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>© 2025 AI Career Path Navigator • Prototype UI</small>
+    </div>
+  </footer>
+
+  <script>
+    
+    const state = { skills: [], courses: [] };
+
+    function tagInput(e, key){
+      if(e.key === 'Enter' && e.target.value.trim()){
+        e.preventDefault();
+        const val = e.target.value.trim();
+        if(!state[key].includes(val)){
+          state[key].push(val);
+          renderTags(key);
+        }
+        e.target.value = '';
+      }
+    }
+    function removeTag(key, val){
+      state[key] = state[key].filter(v => v !== val);
+      renderTags(key);
+    }
+    function renderTags(key){
+      const cont = document.getElementById(key+'-tags');
+      cont.innerHTML = state[key].map(v => `<span class="tag">${v}<button type="button" onclick="removeTag('${key}','${v.replace(/'/g, "&#39;")}')">×</button></span>`).join('');
+    }
+
+    
+    function handleSubmit(e){
+      e.preventDefault();
+      const data = new FormData(e.target);
+      const riasec = [...document.querySelectorAll('input[name="riasec"]:checked')].map(i=>i.value).join('');
+      const payload = {
+        name: data.get('name'),
+        age: data.get('age'),
+        track: data.get('track'),
+        location: data.get('location'),
+        riasec,
+        skills: state.skills,
+        courses: state.courses,
+        workstyle: data.get('workstyle'),
+        study: data.get('study'),
+        goals: data.get('goals')
+      };
+      
+      const mock = mockRecommend(payload);
+      renderResults(mock);
+      document.getElementById('results').scrollIntoView({behavior:'smooth'});
+    }
+
+    function mockRecommend({riasec, skills=[]}){
+      
+      const picks = [];
+      const sk = skills.join(' ').toLowerCase();
+      if(/python|sql|excel|tableau|power bi|statistics/.test(sk)) picks.push(['Data Analyst','Entry‑level salary ~$', 'Roadmap: Excel → SQL → BI → Statistics']);
+      if(/photoshop|illustrator|figma|ui|ux|design/.test(sk)) picks.push(['UI/UX Designer','', 'Roadmap: Design basics → Figma → UX projects → Portfolio']);
+      if(/biology|chemistry|lab|science/.test(sk)) picks.push(['Lab Technician','', 'Roadmap: Lab safety → Techniques → Internship']);
+      if(riasec.includes('S')) picks.push(['Teacher / Trainer','', 'Roadmap: Subject mastery → Teaching practice → Certificate']);
+      if(!picks.length) picks.push(['Explore Multiple Paths','', 'Try interest profiler & foundational courses.']);
+      return picks.slice(0,3).map(([title,salary,steps])=>({title,salary,steps,score: Math.round(60+Math.random()*40)}));
+    }
+
+    function renderResults(list){
+      const box = document.getElementById('results');
+      box.innerHTML = list.map(item => `
+        <article class="card result-card">
+          <div class="result-head">
+            <h4>${item.title}</h4>
+            <div class="score" title="Fit score">${item.score}%</div>
+          </div>
+          <ul class="result-details">
+            ${item.salary ? `<li>${item.salary}</li>`:''}
+            <li>${item.steps}</li>
+          </ul>
+          <div class="result-actions">
+            <a class="btn" href="chat.html">Ask the chatbot</a>
+          </div>
+        </article>
+      `).join('');
+    }
+  </script>
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,6 @@
+
+Career Recommendation Model: 
+https://colab.research.google.com/drive/1SelYhyJBaNCZGx30oOClD5KM3JeLMS1a?usp=sharing
+
+RAG Chatbot:
+https://colab.research.google.com/drive/1BNbTFtGzLT6Qxwxqa_hkn8ujVfAaaP3o?usp=sharing#scrollTo=hD33vgrjpp6D

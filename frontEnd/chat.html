@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Career Path Navigator – Chatbot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="logo">💬</div>
+        <div class="titles">
+          <h1>Career Chatbot</h1>
+          <p class="subtitle">Ask anything about jobs, skills, salaries & roadmaps</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <a class="nav-link" href="index.html">Profile</a>
+        <a class="nav-link active" href="chat.html">Chatbot</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container chat-container">
+    <aside class="chat-sidebar card">
+      <h3>Topics</h3>
+      <ul class="topic-list">
+        <li><button class="topic" onclick="preset('What skills do I need for data analysis?')">Data Analyst skills</button></li>
+        <li><button class="topic" onclick="preset('Compare UI/UX vs Graphic Design careers')">UI/UX vs Graphic</button></li>
+        <li><button class="topic" onclick="preset('Roadmap to become a lab technician from high school')">Lab tech roadmap</button></li>
+        <li><button class="topic" onclick="preset('What certifications help for cloud careers?')">Cloud certs</button></li>
+      </ul>
+    </aside>
+
+    <section class="card chat-panel">
+      <div id="chatLog" class="chat-log">
+        <div class="msg bot">Hi! Ask me about careers, skills, courses, or salaries. 😊</div>
+      </div>
+      <form class="chat-input" onsubmit="sendMessage(event)">
+        <input id="chatText" type="text" placeholder="Type your question…" required />
+        <button class="btn btn-primary" type="submit">Send</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>© 2025 AI Career Path Navigator • Prototype UI</small>
+    </div>
+  </footer>
+
+  <script>
+    function preset(q){
+      const input = document.getElementById('chatText'); 
+      input.value = q; 
+      input.focus();
+    }
+
+    async function sendMessage(e){
+      e.preventDefault();
+      const input = document.getElementById('chatText');
+      const text = input.value.trim();
+      if(!text) return;
+      input.value = '';
+      pushMsg('user', text);
+
+      try {
+        const response = await fetch("/ask", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({question: text})
+        });
+        const data = await response.json();
+
+        // Only show the clean answer from the model
+        if(data.answer){
+          pushMsg('bot', data.answer);
+        } else {
+          pushMsg('bot', "Sorry, I couldn't get an answer.");
+        }
+
+        // Scroll chat to bottom
+        const log = document.getElementById('chatLog');
+        log.scrollTop = log.scrollHeight;
+
+      } catch(err){
+        console.error(err);
+        pushMsg('bot', "Error contacting server. Make sure Flask is running.");
+      }
+    }
+
+    function pushMsg(role, text){
+      const el = document.createElement('div');
+      el.className = 'msg ' + (role==='bot'?'bot':'user');
+      el.textContent = text;
+      document.getElementById('chatLog').appendChild(el);
+    }
+  </script>
+</body>
+</html>
